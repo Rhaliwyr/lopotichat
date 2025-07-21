@@ -1,128 +1,119 @@
-let currentArtist = localStorage.getItem("selectedArtist") || "";
-let currentSong = null;
-let currentLyricsLines = [];
-let displayedLines = 2;
-let tryCount = 0;
+const lyricsBox = document.getElementById('lyrics');
+const guessForm = document.getElementById('guessForm');
+const guessInput = document.getElementById('guess');
+const feedback = document.getElementById('feedback');
+const triesBar = document.getElementById('triesBar');
+const scoreDisplay = document.getElementById('scoreDisplay');
+const replayBtn = document.getElementById('replay');
+const artistDisplay = document.getElementById('artistName');
+const bestScoreDisplay = document.getElementById('bestScore');
+
+let artist = localStorage.getItem('selectedArtist') || 'Orelsan';
+let currentTitle = '';
+let fullLyrics = '';
+let revealedLines = 1;
 let maxTries = 5;
+let tries = 0;
 let score = 0;
-let bestScore = parseInt(localStorage.getItem("bestScore") || "0");
 
-const lyricsDisplay = document.getElementById("lyrics");
-const guessForm = document.getElementById("guessForm");
-const guessInput = document.getElementById("guessInput");
-const feedback = document.getElementById("feedback");
-const scoreDisplay = document.getElementById("scoreDisplay");
-
-function updateBestScore(score) {
-  if (score > bestScore) {
-    bestScore = score;
-    localStorage.setItem("bestScore", bestScore);
-  }
-}
-
-function displayBestScore() {
-  const bestScoreEl = document.getElementById("bestScore");
-  bestScoreEl.textContent = `🏆 Meilleur score : ${bestScore}`;
-}
-
-function updateTriesBar() {
-  const triesBar = document.getElementById("triesBar");
-  triesBar.innerHTML = "";
+// Utilitaire pour générer les pastilles d'essai
+function updateTriesDisplay() {
+  triesBar.innerHTML = '';
   for (let i = 0; i < maxTries; i++) {
-    const dot = document.createElement("div");
-    dot.style.width = "20px";
-    dot.style.height = "20px";
-    dot.style.borderRadius = "50%";
-    dot.style.backgroundColor = i < tryCount ? "#e74c3c" : "#ccc";
+    const dot = document.createElement('div');
+    dot.classList.add(i < tries ? 'used' : '');
     triesBar.appendChild(dot);
   }
 }
 
-function displayLyrics() {
-  lyricsDisplay.textContent = currentLyricsLines.slice(0, displayedLines).join("\n");
+// Affiche les N premières lignes des paroles
+function showLyrics(linesToShow = revealedLines) {
+  const allLines = fullLyrics.split('\n').filter(line => line.trim() !== '');
+  const visible = allLines.slice(0, linesToShow).join('\n');
+  lyricsBox.textContent = visible || '[Paroles non disponibles]';
 }
 
-function showLoading() {
-  lyricsDisplay.innerHTML = `<em>Chargement des paroles...</em>`;
-}
-
-function endRound(success) {
-  if (success) {
-    feedback.textContent = "🎉 Bravo ! C'était bien : " + currentSong;
-    score += (maxTries - tryCount + 1);
-    updateBestScore(score);
-  } else {
-    feedback.textContent = "❌ Perdu ! C'était : " + currentSong;
-  }
-
-  scoreDisplay.textContent = `Score : ${score}`;
-  displayBestScore();
-  updateTriesBar();
-
-  setTimeout(() => {
-    loadRandomSong();
-  }, 3000);
-}
-
+// Recharge une nouvelle chanson aléatoire
 async function loadRandomSong() {
-  showLoading();
-  feedback.textContent = "";
-  guessInput.value = "";
-  tryCount = 0;
-  displayedLines = 2;
+  feedback.textContent = '';
+  lyricsBox.textContent = 'Chargement des paroles...';
+  tries = 0;
+  revealedLines = 1;
+  updateTriesDisplay();
 
-  // Récupérer la liste des chansons
-  const trackListUrl = `https://api.lyrics.ovh/suggest/${encodeURIComponent(currentArtist)}`;
   try {
-    const res = await fetch(trackListUrl);
+    const res = await fetch(`https://api.lyrics.ovh/suggest/${encodeURIComponent(artist)}`);
     const data = await res.json();
-    const songs = data.data.filter((song) => song.artist.name.toLowerCase() === currentArtist.toLowerCase());
-    if (!songs.length) {
-      lyricsDisplay.textContent = "Aucune chanson trouvée pour cet artiste.";
-      return;
-    }
+    const tracks = data.data.filter(track => track.artist.name.toLowerCase() === artist.toLowerCase());
 
-    // Choisir une chanson au hasard
-    const randomSong = songs[Math.floor(Math.random() * songs.length)];
-    currentSong = randomSong.title;
-    const lyricsUrl = `https://api.lyrics.ovh/v1/${encodeURIComponent(currentArtist)}/${encodeURIComponent(currentSong)}`;
+    if (tracks.length === 0) throw new Error('Aucune chanson trouvée');
 
-    const lyricsRes = await fetch(lyricsUrl);
+    const song = tracks[Math.floor(Math.random() * tracks.length)];
+    currentTitle = song.title;
+    artistDisplay.textContent = `Artiste : ${song.artist.name}`;
+
+    const lyricsRes = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(song.artist.name)}/${encodeURIComponent(song.title)}`);
     const lyricsData = await lyricsRes.json();
+    fullLyrics = lyricsData.lyrics || 'Paroles indisponibles.';
 
-    if (!lyricsData.lyrics) {
-      lyricsDisplay.textContent = "Paroles introuvables.";
-      return;
-    }
+    showLyrics();
 
-    currentLyricsLines = lyricsData.lyrics.split("\n").filter((line) => line.trim() !== "");
-    displayLyrics();
-    updateTriesBar();
-    displayBestScore();
   } catch (err) {
-    lyricsDisplay.textContent = "Erreur lors du chargement.";
+    lyricsBox.textContent = 'Erreur lors du chargement des paroles.';
     console.error(err);
   }
 }
 
-guessForm.addEventListener("submit", (e) => {
+// Formulaire de validation
+guessForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const userGuess = guessInput.value.trim().toLowerCase();
-  const correctTitle = currentSong.trim().toLowerCase();
+  const correctTitle = currentTitle.trim().toLowerCase();
 
-  tryCount++;
+  if (!userGuess) return;
+
+  tries++;
+  updateTriesDisplay();
 
   if (userGuess === correctTitle) {
-    endRound(true);
-  } else if (tryCount < maxTries) {
-    displayedLines += 2;
-    displayLyrics();
-    feedback.textContent = "❌ Mauvaise réponse, essaye encore.";
-    updateTriesBar();
+    feedback.textContent = '🎉 Bonne réponse !';
+    score += Math.max(0, 6 - tries);
+    scoreDisplay.textContent = `Score : ${score}`;
+    replayBtn.style.display = 'inline-block';
+    guessForm.style.display = 'none';
+
+    // Stockage du meilleur score
+    const bestScore = parseInt(localStorage.getItem('bestScore') || '0');
+    if (score > bestScore) {
+      localStorage.setItem('bestScore', score);
+      bestScoreDisplay.textContent = `🏆 Meilleur score : ${score}`;
+    }
+
   } else {
-    endRound(false);
+    feedback.textContent = `❌ Mauvaise réponse (${tries}/${maxTries})`;
+    revealedLines++;
+    showLyrics();
+
+    if (tries >= maxTries) {
+      feedback.textContent = `😢 Perdu ! La réponse était : ${currentTitle}`;
+      replayBtn.style.display = 'inline-block';
+      guessForm.style.display = 'none';
+    }
   }
+
+  guessInput.value = '';
 });
 
-// Lancement initial
-loadRandomSong();
+replayBtn.addEventListener('click', () => {
+  replayBtn.style.display = 'none';
+  guessForm.style.display = 'block';
+  guessInput.value = '';
+  feedback.textContent = '';
+  loadRandomSong();
+});
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', () => {
+  bestScoreDisplay.textContent = `🏆 Meilleur score : ${localStorage.getItem('bestScore') || 0}`;
+  loadRandomSong();
+});

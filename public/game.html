@@ -7,26 +7,30 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Devine la chanson 🎵</h1>
-  <p id="bestScore"></p>
-  <p id="artistName"></p>
-  <pre id="lyrics"></pre>
+  <div class="container">
+    <h1>Devine la chanson 🎵</h1>
 
-  <form id="guessForm">
-    <input type="text" id="guessInput" placeholder="Titre de la chanson" required />
-    <button type="submit">Valider</button>
-  </form>
+    <p id="bestScore"></p>
+    <p id="artistName"></p>
 
-  <div id="triesContainer">
-    <p>Essais :</p>
-    <div id="triesBar" style="display: flex; gap: 5px;"></div>
+    <pre id="lyrics" class="lyrics-box">Chargement des paroles...</pre>
+
+    <form id="guessForm">
+      <input type="text" id="guess" placeholder="Titre de la chanson" required />
+      <button type="submit">Valider</button>
+    </form>
+
+    <div id="triesContainer">
+      <p>Essais :</p>
+      <div id="triesBar" style="display: flex; gap: 5px;"></div>
+    </div>
+
+    <p id="feedback"></p>
+    <p id="scoreDisplay"></p>
+
+    <button id="replay" style="display: none;">Nouvelle chanson</button>
   </div>
 
-  <p id="feedback"></p>
-  <p id="scoreDisplay"></p>
-
-  <button id="newSongBtn" style="display: none;">Nouvelle chanson</button>
-
-  <script src="game.js"></script>
+  <script src="game.js" defer></script>
 </body>
 </html>
