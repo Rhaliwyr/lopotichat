@@ -60,7 +60,7 @@ async function loadRandomSong() {
 
     artistDisplay.textContent = `Artiste : ${artist}`;
 
-    const lyricsRes = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(currentTitle)}`);
+    const lyricsRes = await fetch(`/api/lyrics?artist=${artist}&title=${title}`);
     const lyricsData = await lyricsRes.json();
     fullLyrics = lyricsData.lyrics || 'Paroles indisponibles.';
 
