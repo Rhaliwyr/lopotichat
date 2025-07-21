@@ -21,7 +21,11 @@ function updateTriesDisplay() {
   triesBar.innerHTML = '';
   for (let i = 0; i < maxTries; i++) {
     const dot = document.createElement('div');
-    dot.classList.add(i < tries ? 'used' : '');
+
+    if (i < tries) {
+      dot.classList.add('used');
+    }
+    
     triesBar.appendChild(dot);
   }
 }
