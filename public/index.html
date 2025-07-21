@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Musiquiz</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <img src="logo.png" alt="Logo Musiquiz" class="logo" />
+    <h1>Bienvenue sur Musiquiz 🎵</h1>
+    <p>Choisis un artiste pour commencer :</p>
+
+    <form id="artistForm">
+      <input type="text" name="artist" id="artist" placeholder="Nom de l'artiste" required autocomplete="off"/>
+      <ul id="suggestions" class="suggestions"></ul>
+      <button type="submit">Jouer</button>
+    </form>
+  </div>
+
+  <script>
+    const input = document.getElementById("artist");
+    const form = document.getElementById("artistForm");
+    const suggestionsEl = document.getElementById("suggestions");
+
+    // Liste locale d'artistes supportés (ceux de artists.json)
+    const knownArtists = ["Eminem", "Queen", "Adele"];
+
+    input.addEventListener("input", () => {
+      const q = input.value.toLowerCase();
+      suggestionsEl.innerHTML = "";
+
+      if (q.length < 1) return;
+
+      const filtered = knownArtists.filter(name =>
+        name.toLowerCase().includes(q)
+      );
+
+      filtered.forEach(name => {
+        const li = document.createElement("li");
+        li.textContent = name;
+        li.addEventListener("click", () => {
+          input.value = name;
+          suggestionsEl.innerHTML = "";
+        });
+        suggestionsEl.appendChild(li);
+      });
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const artist = input.value.trim();
+      if (artist) {
+        window.location.href = `game.html?artist=${encodeURIComponent(artist)}`;
+      }
+    });
+  </script>
+</body>
+</html>
