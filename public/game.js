@@ -58,9 +58,9 @@ async function loadRandomSong() {
     const randomIndex = Math.floor(Math.random() * songs.length);
     currentTitle = songs[randomIndex];
 
-    artistDisplay.textContent = `Artiste : ${song.artist.name}`;
+    artistDisplay.textContent = `Artiste : ${artist}`;
 
-    const lyricsRes = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(song.artist.name)}/${encodeURIComponent(song.title)}`);
+    const lyricsRes = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(currentTitle)}`);
     const lyricsData = await lyricsRes.json();
     fullLyrics = lyricsData.lyrics || 'Paroles indisponibles.';
 
