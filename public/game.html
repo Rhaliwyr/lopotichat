@@ -1,64 +1,32 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Jeu Musiquiz</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Devine la chanson</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>Devine la chanson !</h1>
-    <p id="lyrics">Chargement...</p>
+  <h1>Devine la chanson 🎵</h1>
+  <p id="bestScore"></p>
+  <p id="artistName"></p>
+  <pre id="lyrics"></pre>
 
-    <input type="text" id="guess" placeholder="Titre de la chanson">
-    <button id="check">Valider</button>
+  <form id="guessForm">
+    <input type="text" id="guessInput" placeholder="Titre de la chanson" required />
+    <button type="submit">Valider</button>
+  </form>
 
-    <p id="result"></p>
-    <button onclick="location.href='index.html'">← Retour</button>
+  <div id="triesContainer">
+    <p>Essais :</p>
+    <div id="triesBar" style="display: flex; gap: 5px;"></div>
   </div>
 
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const artist = params.get('artist');
-    let currentTitle = "";
+  <p id="feedback"></p>
+  <p id="scoreDisplay"></p>
 
-    async function getRandomSong() {
-      const res = await fetch('../songs/artists.json');
-      const data = await res.json();
+  <button id="newSongBtn" style="display: none;">Nouvelle chanson</button>
 
-      if (!data[artist]) {
-        document.getElementById("lyrics").innerText = "Artiste non trouvé.";
-        return;
-      }
-
-      const songs = data[artist];
-      currentTitle = songs[Math.floor(Math.random() * songs.length)];
-
-      const lyricRes = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(currentTitle)}`);
-      const lyricData = await lyricRes.json();
-
-      if (!lyricData.lyrics) {
-        document.getElementById("lyrics").innerText = "Paroles introuvables.";
-        return;
-      }
-
-      const lines = lyricData.lyrics.split("\n").filter(line => line.trim().length > 0);
-      const excerpt = lines.slice(0, 4).join("<br>"); // affiche 4 lignes
-      document.getElementById("lyrics").innerHTML = excerpt + "<br><em>... ?</em>";
-    }
-
-    document.getElementById("check").addEventListener("click", () => {
-      const guess = document.getElementById("guess").value.trim().toLowerCase();
-      const result = document.getElementById("result");
-
-      if (guess === currentTitle.toLowerCase()) {
-        result.innerHTML = "✅ Bonne réponse !";
-      } else {
-        result.innerHTML = `❌ Mauvaise réponse. C'était : <strong>${currentTitle}</strong>`;
-      }
-    });
-
-    getRandomSong();
-  </script>
+  <script src="game.js"></script>
 </body>
 </html>
