@@ -25,7 +25,7 @@ function updateTriesDisplay() {
     if (i < tries) {
       dot.classList.add('used');
     }
-    
+
     triesBar.appendChild(dot);
   }
 }
@@ -46,14 +46,17 @@ async function loadRandomSong() {
   updateTriesDisplay();
 
   try {
-    const res = await fetch(`https://api.lyrics.ovh/suggest/${encodeURIComponent(artist)}`);
-    const data = await res.json();
-    const tracks = data.data.filter(track => track.artist.name.toLowerCase() === artist.toLowerCase());
+    const res = await fetch('artists.json');
+    const artistData = await res.json();
 
-    if (tracks.length === 0) throw new Error('Aucune chanson trouvée');
+    const songs = artistData[artist];
+    if (!songs || songs.length === 0) {
+      throw new Error('Aucune chanson trouvée pour cet artiste.');
+    }
 
-    const song = tracks[Math.floor(Math.random() * tracks.length)];
-    currentTitle = song.title;
+    const randomIndex = Math.floor(Math.random() * songs.length);
+    currentTitle = songs[randomIndex];
+
     artistDisplay.textContent = `Artiste : ${song.artist.name}`;
 
     const lyricsRes = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(song.artist.name)}/${encodeURIComponent(song.title)}`);
