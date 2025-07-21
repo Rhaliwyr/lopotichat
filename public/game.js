@@ -7,8 +7,8 @@ const scoreDisplay = document.getElementById('scoreDisplay');
 const replayBtn = document.getElementById('replay');
 const artistDisplay = document.getElementById('artistName');
 const bestScoreDisplay = document.getElementById('bestScore');
+const artist = urlParams.get("artist");
 
-let artist = localStorage.getItem('selectedArtist') || 'Orelsan';
 let currentTitle = '';
 let fullLyrics = '';
 let revealedLines = 1;
