@@ -12,7 +12,7 @@ const artist = urlParams.get("artist");
 
 let currentTitle = '';
 let fullLyrics = '';
-let revealedLines = 1;
+let revealedLines = 4;
 let maxTries = 5;
 let tries = 0;
 let score = 0;
@@ -43,7 +43,7 @@ async function loadRandomSong() {
   feedback.textContent = '';
   lyricsBox.textContent = 'Chargement des paroles...';
   tries = 0;
-  revealedLines = 1;
+  revealedLines = 4;
   updateTriesDisplay();
 
   try {
@@ -60,7 +60,7 @@ async function loadRandomSong() {
 
     artistDisplay.textContent = `Artiste : ${artist}`;
 
-    const lyricsRes = await fetch(`/api/lyrics?artist=${artist}&title=${title}`);
+    const lyricsRes = await fetch(`/api/lyrics?artist=${artist}&title=${currentTitle}`);
     const lyricsData = await lyricsRes.json();
     fullLyrics = lyricsData.lyrics || 'Paroles indisponibles.';
 
@@ -99,7 +99,7 @@ guessForm.addEventListener('submit', (e) => {
 
   } else {
     feedback.textContent = `❌ Mauvaise réponse (${tries}/${maxTries})`;
-    revealedLines++;
+    revealedLines+=2;
     showLyrics();
 
     if (tries >= maxTries) {
