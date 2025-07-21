@@ -7,6 +7,7 @@ const scoreDisplay = document.getElementById('scoreDisplay');
 const replayBtn = document.getElementById('replay');
 const artistDisplay = document.getElementById('artistName');
 const bestScoreDisplay = document.getElementById('bestScore');
+const urlParams = new URLSearchParams(window.location.search);
 const artist = urlParams.get("artist");
 
 let currentTitle = '';
