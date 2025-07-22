@@ -1,18 +1,24 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Musiquiz</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Bienvenue sur Musiquiz 🎵</h1>
-  <form id="artistForm">
-    <input type="text" id="artist" placeholder="Nom de l'artiste" required />
-    <button type="submit">Jouer</button>
-  </form>
+  <div class="container">
+    <img src="logo.png" alt="Logo Musiquiz" class="logo" />
+    <h1>Bienvenue sur Musiquiz 🎵</h1>
+    <p>Choisis un artiste pour commencer :</p>
 
-  <script src="index.js"></script>
+    <form id="artistForm">
+      <input type="text" name="artist" id="artist" placeholder="Nom de l'artiste" required autocomplete="off"/>
+      <ul id="suggestions" class="suggestions"></ul>
+      <button type="submit">Jouer</button>
+    </form>
+  </div>
+
+  <script src="index.js" defer></script>
 </body>
 </html>
