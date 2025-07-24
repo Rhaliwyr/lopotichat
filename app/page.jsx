@@ -12,10 +12,10 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch('/artists.json')
-      .then(res => res.json())
-      .then(data => setKnownArtists(data));
-  }, []);
+    fetch('/api/artists')
+    .then(res => res.json())
+    .then(data => setKnownArtists(data));
+}, []);
 
   const handleInput = (e) => {
     const value = e.target.value;
