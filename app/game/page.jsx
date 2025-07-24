@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import Game from "./Game";
+import Game from "./game";
 
 export default function GamePage() {
   return (
