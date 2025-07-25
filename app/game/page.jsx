@@ -1,10 +1,10 @@
 import { Suspense } from "react";
-import Game from "./game";
+import GameWrapper from "./game-wrapper";
 
 export default function GamePage() {
   return (
     <Suspense fallback={<div>Chargement du jeu...</div>}>
-      <Game />
+      <GameWrapper />
     </Suspense>
   );
 }

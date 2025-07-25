@@ -1,13 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import "./game.css"; // ou adapte selon ton organisation CSS
+import "./game.css";
 
-export default function Game() {
-  const searchParams = useSearchParams();
-  const artist = searchParams.get("artist");
-
+export default function Game({ artist }) {
   const [lyrics, setLyrics] = useState("");
   const [title, setTitle] = useState("");
   const [input, setInput] = useState("");
@@ -19,16 +15,18 @@ export default function Game() {
         const res = await fetch(`/api/lyrics?artist=${encodeURIComponent(artist)}`);
         const data = await res.json();
 
-        setLyrics(data.lyrics);
-        setTitle(data.title);
+        if (data.lyrics) {
+          setLyrics(data.lyrics);
+          setTitle(data.title);
+        } else {
+          setFeedback("Paroles non trouvées.");
+        }
       } catch (e) {
-        setFeedback("Erreur lors du chargement des paroles.");
+        setFeedback("Erreur lors du chargement.");
       }
     }
 
-    if (artist) {
-      loadSong();
-    }
+    if (artist) loadSong();
   }, [artist]);
 
   function handleSubmit(e) {

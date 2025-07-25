@@ -1,7 +1,7 @@
 // /app/api/lyrics/route.js
 
 import { NextResponse } from "next/server";
-import artistsData from "../../../data/artists.json";
+import artistsData from "@/data/artists.json";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
@@ -12,10 +12,21 @@ export async function GET(request) {
   }
 
   const songs = artistsData[artist];
-  const random = songs[Math.floor(Math.random() * songs.length)];
+  const randomTitle = songs[Math.floor(Math.random() * songs.length)];
 
-  return NextResponse.json({
-    lyrics: random.lyrics,
-    title: random.title,
-  });
+  try {
+    const res = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(randomTitle)}`);
+    const data = await res.json();
+
+    if (!data || !data.lyrics) {
+      return NextResponse.json({ error: "Paroles non trouvées" }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      lyrics: data.lyrics,
+      title: randomTitle,
+    });
+  } catch (err) {
+    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+  }
 }
