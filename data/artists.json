@@ -1,5 +1,14 @@
 {
-  "Eminem": ["Mockingbird", "Lose Yourself", "Stan"],
-  "Adele": ["Hello", "Rolling in the Deep"],
-  "Queen": ["Bohemian Rhapsody", "Don't Stop Me Now"]
+  "Eminem": [
+    { "title": "Mockingbird" },
+    { "title": "Lose Yourself" }
+  ],
+  "Adele": [
+    { "title": "Hello" },
+    { "title": "Someone Like You" }
+  ],
+  "Queen": [
+    { "title": "Bohemian Rhapsody" },
+    { "title": "Don't Stop Me Now" }
+  ]
 }
