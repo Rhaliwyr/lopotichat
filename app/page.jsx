@@ -14,7 +14,7 @@ export default function Home() {
   useEffect(() => {
     fetch('/api/artists')
     .then(res => res.json())
-    .then(data => setKnownArtists(data));
+    .then(data => setKnownArtists(Object.keys(data)));
 }, []);
 
   const handleInput = (e) => {
