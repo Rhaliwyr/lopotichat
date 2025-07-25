@@ -1,7 +1,7 @@
 // /app/api/lyrics/route.js
 
 import { NextResponse } from "next/server";
-import artistsData from "@/data/artists.json";
+import artistsData from "../../../data/artists.json";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
